@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  # Servicio de PostgreSQL (Base de datos)
+  db:
+    image: postgres:15              # Usa la imagen de postgres que descargaste
+    environment:
+      POSTGRES_USER: heladeria      # Tu usuario
+      POSTGRES_PASSWORD: 1234       # Tu contraseña
+      POSTGRES_DB: heladeria_db     # Tu base de datos
+    ports:
+      - '5432:5432'                 # Puerto para conectarte desde DBeaver
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Guarda los datos permanentemente
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U heladeria"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Servicio de Django (Tu aplicación web)
+  web:
+    build: .                        # Construye desde el Dockerfile que crearemos
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app                      # Conecta tu carpeta con el contenedor
+    ports:
+      - '8000:8000'                 # Puerto para ver la web en localhost:8000
+    depends_on:
+      db:
+        condition: service_healthy  # Espera a que PostgreSQL esté listo
+    environment:
+      - DEBUG=True
+
+volumes:
+  postgres_data:                    # Almacenamiento persistente para la BD
