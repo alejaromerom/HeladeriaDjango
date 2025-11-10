@@ -1,0 +1,110 @@
+{% extends 'heladeria/base.html' %}
+
+{% block title %}Productos - Heladería{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-cup-straw"></i> Catálogo de Productos</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if user.is_authenticated and user.rol == 'EMPLEADO' or user.rol == 'ADMINISTRADOR' %}
+            <a href="{% url 'producto_crear' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nuevo Producto
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% if productos_info %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for item in productos_info %}
+            <div class="col">
+                <div class="card h-100 shadow-sm {% if not item.hay_stock %}border-danger{% endif %}">
+                    <div class="card-header {% if item.hay_stock %}bg-primary{% else %}bg-danger{% endif %} text-white">
+                        <h5 class="mb-0">
+                            {% if item.producto.tipo == 'COPA' %}
+                                <i class="bi bi-cup"></i>
+                            {% else %}
+                                <i class="bi bi-cup-straw"></i>
+                            {% endif %}
+                            {{ item.producto.nombre }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Precio -->
+                        <h3 class="text-primary mb-3">${{ item.producto.precio_publico }}</h3>
+                        
+                        <!-- Tipo y detalles -->
+                        <p class="mb-2">
+                            <span class="badge bg-info">{{ item.producto.get_tipo_display }}</span>
+                            {% if item.producto.tipo == 'COPA' and item.producto.tipo_vaso %}
+                                <span class="badge bg-secondary">{{ item.producto.tipo_vaso }}</span>
+                            {% elif item.producto.tipo == 'MALTEADA' and item.producto.volumen_onzas %}
+                                <span class="badge bg-secondary">{{ item.producto.volumen_onzas }} oz</span>
+                            {% endif %}
+                        </p>
+                        
+                        <!-- Información nutricional y costos -->
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="bi bi-fire"></i> {{ item.calorias }} calorías
+                            </small>
+                        </div>
+                        
+                        {% if user.is_authenticated and user.rol == 'ADMINISTRADOR' %}
+                            <div class="alert alert-sm alert-info py-2 px-2">
+                                <small>
+                                    <strong>Costo:</strong> ${{ item.costo }}<br>
+                                    <strong>Rentabilidad:</strong> ${{ item.rentabilidad }}
+                                </small>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Stock -->
+                        {% if not item.hay_stock %}
+                            <div class="alert alert-danger py-2">
+                                <i class="bi bi-exclamation-triangle"></i> Sin stock
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Ingredientes -->
+                        <p class="mb-2"><strong>Ingredientes:</strong></p>
+                        <ul class="list-unstyled small">
+                            {% for ingrediente in item.producto.ingredientes.all %}
+                                <li><i class="bi bi-check2"></i> {{ ingrediente.nombre }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'producto_detalle' item.producto.pk %}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> Ver Detalles
+                            </a>
+                            
+                            {% if user.is_authenticated and user.rol == 'EMPLEADO' or user.rol == 'ADMINISTRADOR' %}
+                                <a href="{% url 'producto_editar' item.producto.pk %}" 
+                                   class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> 
+        No hay productos disponibles aún.
+        {% if user.is_authenticated and user.rol == 'EMPLEADO' or user.rol == 'ADMINISTRADOR' %}
+            <br>
+            <a href="{% url 'producto_crear' %}" class="btn btn-success mt-3">
+                <i class="bi bi-plus-circle"></i> Crear el primer producto
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

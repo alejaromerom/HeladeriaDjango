@@ -1,0 +1,79 @@
+{% extends 'heladeria/base.html' %}
+
+{% block title %}Ingredientes - Heladería{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-box"></i> Lista de Ingredientes</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'ingrediente_crear' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nuevo Ingrediente
+        </a>
+    </div>
+</div>
+
+{% if ingredientes %}
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Precio</th>
+                    <th>Calorías</th>
+                    <th>Inventario</th>
+                    <th>Propiedades</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ingrediente in ingredientes %}
+                    <tr>
+                        <td><strong>{{ ingrediente.nombre }}</strong></td>
+                        <td><span class="badge bg-info">{{ ingrediente.get_tipo_display }}</span></td>
+                        <td>${{ ingrediente.precio }}</td>
+                        <td>{{ ingrediente.calorias }} cal</td>
+                        <td>
+                            {% if ingrediente.inventario > 10 %}
+                                <span class="badge bg-success">{{ ingrediente.inventario }}</span>
+                            {% elif ingrediente.inventario > 0 %}
+                                <span class="badge bg-warning">{{ ingrediente.inventario }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ ingrediente.inventario }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if ingrediente.es_vegetariano %}
+                                <span class="badge bg-success">Veg</span>
+                            {% endif %}
+                            {% if ingrediente.es_sano %}
+                                <span class="badge bg-info">Sano</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'ingrediente_editar' ingrediente.pk %}" 
+                               class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'ingrediente_eliminar' ingrediente.pk %}" 
+                               class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> No hay ingredientes registrados.
+        <br>
+        <a href="{% url 'ingrediente_crear' %}" class="btn btn-success mt-3">
+            <i class="bi bi-plus-circle"></i> Crear el primer ingrediente
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

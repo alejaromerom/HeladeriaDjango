@@ -1,0 +1,99 @@
+{% extends 'heladeria/base.html' %}
+
+{% block title %}Producto Más Rentable - Heladería{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-graph-up"></i> Análisis de Rentabilidad</h1>
+    </div>
+</div>
+
+{% if mas_rentable %}
+    <!-- Producto más rentable destacado -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-trophy"></i> Producto Más Rentable
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h2 class="text-success">{{ mas_rentable.producto.nombre }}</h2>
+                            <p class="lead">
+                                <span class="badge bg-info">{{ mas_rentable.producto.get_tipo_display }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h6 class="text-muted">Precio</h6>
+                                    <h4 class="text-primary">${{ mas_rentable.precio }}</h4>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-muted">Costo</h6>
+                                    <h4 class="text-warning">${{ mas_rentable.costo }}</h4>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-muted">Rentabilidad</h6>
+                                    <h4 class="text-success">${{ mas_rentable.rentabilidad }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Tabla de todos los productos por rentabilidad -->
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Ranking de Rentabilidad</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th>Precio Público</th>
+                        <th>Costo Producción</th>
+                        <th>Rentabilidad</th>
+                        <th>% Margen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in productos_rentabilidad %}
+                        <tr {% if forloop.first %}class="table-success"{% endif %}>
+                            <td>
+                                {% if forloop.first %}
+                                    <i class="bi bi-trophy-fill text-warning"></i>
+                                {% else %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ item.producto.nombre }}</strong></td>
+                            <td><span class="badge bg-info">{{ item.producto.get_tipo_display }}</span></td>
+                            <td>${{ item.precio }}</td>
+                            <td>${{ item.costo }}</td>
+                            <td>
+                                <strong class="text-success">${{ item.rentabilidad }}</strong>
+                            </td>
+                            <td>
+                                {% widthratio item.rentabilidad item.precio 100 %}%
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

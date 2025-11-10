@@ -1,0 +1,155 @@
+{% extends 'heladeria/base.html' %}
+
+{% block title %}Dashboard - Heladería{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h1>
+        <p class="lead">Bienvenido, <strong>{{ usuario.get_full_name|default:usuario.username }}</strong></p>
+        <p>
+            <span class="badge bg-primary">{{ usuario.get_rol_display }}</span>
+        </p>
+    </div>
+</div>
+
+<!-- Estadísticas generales -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-cup-straw"></i> Total de Productos
+                </h5>
+                <h2 class="display-4">{{ total_productos }}</h2>
+                <a href="{% url 'producto_lista' %}" class="btn btn-light btn-sm">Ver Productos</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-box"></i> Total de Ingredientes
+                </h5>
+                <h2 class="display-4">{{ total_ingredientes }}</h2>
+                {% if usuario.rol == 'EMPLEADO' or usuario.rol == 'ADMINISTRADOR' %}
+                    <a href="{% url 'ingrediente_lista' %}" class="btn btn-light btn-sm">Ver Ingredientes</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas para administrador -->
+{% if usuario.rol == 'ADMINISTRADOR' %}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-cart"></i> Ventas de Hoy
+                    </h5>
+                    <h2 class="display-4">{{ ventas_hoy }}</h2>
+                    <p class="mb-0">Total: ${{ total_ventas_hoy }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-graph-up"></i> Análisis
+                    </h5>
+                    <p class="mb-3">Consulta el producto más rentable</p>
+                    <a href="{% url 'producto_rentable' %}" class="btn btn-light">
+                        Ver Rentabilidad
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Acciones rápidas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="mb-3">
+            <i class="bi bi-lightning"></i> Acciones Rápidas
+        </h3>
+    </div>
+    
+    {% if usuario.rol == 'CLIENTE' %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-bag text-primary" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Comprar Producto</h5>
+                    <p class="text-muted">Realiza una nueva compra</p>
+                    <a href="{% url 'venta_crear' %}" class="btn btn-primary">
+                        <i class="bi bi-cart-plus"></i> Comprar
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-clock-history text-info" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Mis Compras</h5>
+                    <p class="text-muted">Revisa tu historial</p>
+                    <a href="{% url 'mis_compras' %}" class="btn btn-info">
+                        <i class="bi bi-list"></i> Ver Historial
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if usuario.rol == 'EMPLEADO' or usuario.rol == 'ADMINISTRADOR' %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-plus-circle text-success" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Nuevo Producto</h5>
+                    <p class="text-muted">Agregar producto</p>
+                    <a href="{% url 'producto_crear' %}" class="btn btn-success">
+                        <i class="bi bi-plus"></i> Crear
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam text-warning" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Nuevo Ingrediente</h5>
+                    <p class="text-muted">Agregar ingrediente</p>
+                    <a href="{% url 'ingrediente_crear' %}" class="btn btn-warning">
+                        <i class="bi bi-plus"></i> Crear
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if usuario.rol == 'ADMINISTRADOR' %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-cash-stack text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Ver Ventas</h5>
+                    <p class="text-muted">Historial completo</p>
+                    <a href="{% url 'venta_lista' %}" class="btn btn-danger">
+                        <i class="bi bi-list"></i> Ver Todas
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
