@@ -511,6 +511,6 @@ Si tienes problemas o preguntas:
 
 **⭐ Si te gustó este proyecto, dale una estrella!**
 
-Hecho con ❤️ y mucho ☕ por [Alejandro Romero](https://github.com/alejaromerom)
+Hecho con ❤️ y mucho ☕ por [Alejandra Romero](https://github.com/alejaromerom)
 
 </div>
