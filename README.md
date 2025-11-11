@@ -20,6 +20,7 @@ Una aplicación web completa para la gestión de una heladería, desarrollada co
 - [Modelos de Datos](#-modelos-de-datos)
 - [Sistema de Permisos](#-sistema-de-permisos)
 - [Capturas de Pantalla](#-capturas-de-pantalla)
+- [Despliegue](#-despliegue)
 - [Contribución](#-contribución)
 - [Licencia](#-licencia)
 
@@ -452,6 +453,61 @@ docker-compose exec web python manage.py shell
 # Acceder a PostgreSQL
 docker-compose exec db psql -U heladeria -d heladeria_db
 ```
+
+---
+
+## 🌐 Despliegue
+
+### Despliegue en Producción (Render.com)
+
+La aplicación está lista para desplegarse en **Render.com** de forma gratuita.
+
+#### 🚀 Pasos Rápidos
+
+1. **Subir a GitHub** (si aún no lo has hecho)
+```bash
+git add .
+git commit -m "Preparar para despliegue"
+git push origin main
+```
+
+2. **Desplegar en Render**
+   - Ve a [render.com](https://render.com) y crea una cuenta
+   - Click en "New +" → "Blueprint"
+   - Conecta tu repositorio de GitHub
+   - Render detectará automáticamente el `render.yaml`
+   - Click en "Apply" y espera 5-10 minutos
+
+3. **Crear superusuario**
+```bash
+# En la consola de Render (Shell)
+python manage.py createsuperuser
+```
+
+4. **¡Listo!** Tu app estará en:
+```
+https://heladeria-delicias.onrender.com
+```
+
+#### 📚 Guías de Despliegue
+
+- **[DEPLOY_RAPIDO.md](DEPLOY_RAPIDO.md)** - Pasos rápidos (5 minutos)
+- **[GUIA_DESPLIEGUE.md](GUIA_DESPLIEGUE.md)** - Guía completa con múltiples plataformas
+
+#### ✅ Archivos de Despliegue Incluidos
+
+- `render.yaml` - Configuración para Render
+- `build.sh` - Script de construcción automática
+- `requirements.txt` - Con gunicorn, whitenoise y dj-database-url
+- `settings.py` - Configurado para producción
+
+### Otras Plataformas Soportadas
+
+| Plataforma | Precio | PostgreSQL | Guía |
+|------------|--------|------------|------|
+| **Render** | Gratis | ✅ | [Ver guía](GUIA_DESPLIEGUE.md#1%EF%B8%8F⃣-rendercom-recomendado---gratis) |
+| **Railway** | $5/mes | ✅ | [Ver guía](GUIA_DESPLIEGUE.md#2%EF%B8%8F⃣-railway-alternativa) |
+| **PythonAnywhere** | Gratis | ❌ | [Ver guía](GUIA_DESPLIEGUE.md#3%EF%B8%8F⃣-pythonanywhere-opción-simple) |
 
 ---
 

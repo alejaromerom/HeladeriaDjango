@@ -1,0 +1,26 @@
+databases:
+  - name: heladeria-db
+    databaseName: heladeria_db
+    user: heladeria
+    plan: free
+
+services:
+  - type: web
+    name: heladeria-delicias
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: heladeria-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
